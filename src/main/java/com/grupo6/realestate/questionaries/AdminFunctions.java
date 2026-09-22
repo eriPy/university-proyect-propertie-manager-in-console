@@ -41,7 +41,7 @@ public class AdminFunctions {
                     "5. View a user\n" +
                     "6. View all users\n" +
                     "7. Process a transaction\n" +
-                    "8. Shut down admin questionnaire\n"
+                    "8. Shut down admin questionnaire"
                 );
                 int option = Integer.parseInt(scn.nextLine());
                 switch (option) {
@@ -83,7 +83,7 @@ public class AdminFunctions {
             } catch (NumberFormatException e) {
                 System.err.println("Invalid option");
             } catch (Exception e) {
-                System.err.println("Something went wrong in the process");
+                System.err.println("Something went wrong in the process: " + e.getMessage());
             }
         }
     }

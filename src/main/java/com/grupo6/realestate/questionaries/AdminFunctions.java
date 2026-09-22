@@ -18,6 +18,7 @@ public class AdminFunctions {
     
     public void adminQuestionary() {
         UserService userService = new UserService(new UserDao());
+        TransactionFuncions transactionFuncions = new TransactionFuncions();
         Scanner scn = new Scanner(System.in);
         System.out.println("Interface admin running");
         System.out.println("Admin verification");
@@ -35,12 +36,12 @@ public class AdminFunctions {
                 System.out.println(
                     "1. Add an admin\n" +
                     "2. Add a user\n" +
-                    "3. View profile" +
-                    "4. View all admins" +
-                    "5. View a user" +
-                    "6. View all users" +
-                    "7. Process a transaction" +
-                    "8. Shut down admin questionnaire"
+                    "3. View profile\n" +
+                    "4. View all admins\n" +
+                    "5. View a user\n" +
+                    "6. View all users\n" +
+                    "7. Process a transaction\n" +
+                    "8. Shut down admin questionnaire\n"
                 );
                 int option = Integer.parseInt(scn.nextLine());
                 switch (option) {
@@ -62,7 +63,7 @@ public class AdminFunctions {
                         break;
                     case 5:
                         System.out.println("User details");
-                        
+                        userService.viewUser();
                         break;
                     case 6:
                         System.out.println("All users");
@@ -70,6 +71,7 @@ public class AdminFunctions {
                         break;
                     case 7:
                         System.out.println("Processing a transaction...");
+                        transactionFuncions.questionary();
                         break;
                     case 8:
                         System.out.println("Closing questionnaire");

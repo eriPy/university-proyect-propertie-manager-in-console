@@ -8,7 +8,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Programn is running");
-        AdminFunctions adminFunctions = new AdminFunctions(new AdminService(new AdminDao()));
+        AdminDao adminDao = new AdminDao();
+        adminDao.ping();
+        System.out.println("Connected to the database");
+        AdminFunctions adminFunctions = new AdminFunctions(new AdminService(adminDao));
         Scanner scn = new Scanner(System.in);
         while (true) {
             System.out.println("Choose a option");

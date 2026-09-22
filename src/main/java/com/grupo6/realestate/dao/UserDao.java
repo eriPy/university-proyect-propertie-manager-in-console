@@ -49,7 +49,13 @@ public class UserDao {
     public Optional<User> findByEmail(String email) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
-            return Optional.ofNullable(em.find(User.class, email));
+            User user = em.createQuery(
+                "SELECT u FROM User u WHERE email = :email", User.class
+            ).setParameter("email", email)
+                .getSingleResult();
+            return Optional.ofNullable(user);
+        } catch (jakarta.persistence.NoResultException e) {
+            return null;
         } finally {
             em.close();
         }

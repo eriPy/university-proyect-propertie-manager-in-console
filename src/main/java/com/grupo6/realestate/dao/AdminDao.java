@@ -7,6 +7,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class AdminDao {
+    public void ping() {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            em.createNativeQuery("SELECT 1")
+                .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+    
     public void saveAdmin(Admin admin) {
         EntityManager em = JpaUtil.getEntityManager();
         try {

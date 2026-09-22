@@ -33,17 +33,24 @@ public class AdminService {
     }
     
     public void addNewAdmin(Admin admin) {
-        Scanner scn = new Scanner(System.in);
-        System.out.println("Enter the new admin's name");
-        String adminName = scn.nextLine();
-        adminDao.saveAdmin(new Admin(adminName));
-        System.out.println(adminName + " was saved as an admin");
+        while (true) {
+            Scanner scn = new Scanner(System.in);
+            System.out.println("Enter the new admin's name");
+            String adminName = scn.nextLine();
+            if (adminName.isBlank()) {
+                System.out.println("Invalid admin name");
+                continue;
+            }
+            adminDao.saveAdmin(new Admin(adminName));
+            System.out.println(adminName + " was saved as an admin");
+            break;
+        }
     }
     
     public void viewAllAdmins() {
         System.out.println("Admin List");
         List<Admin> adminsList = adminDao.findAll();
-        for (int i = 0; i < adminsList.size(); i++) adminsList.get(i).toString();
+        for (int i = 0; i < adminsList.size(); i++) System.out.println(adminsList.get(i).toString());
     }
     
     

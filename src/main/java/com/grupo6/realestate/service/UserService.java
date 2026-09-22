@@ -56,9 +56,11 @@ public class UserService {
                             String emailDomain = email.substring(email.length() - 10);
                             if (!emailDomain.equals("@email.com")) {
                                 System.out.println("Invalid email, please try again");
+                                continue;
                             }
                         } catch (StringIndexOutOfBoundsException e) {
                             System.out.println("Invalid email, please try again");
+                            continue;
                         }
                         if (userDao.existsByEmail(email)) {
                             System.out.println("This email already exists");
@@ -73,6 +75,7 @@ public class UserService {
                             userType = userType.valueOf(input);
                         } catch (IllegalArgumentException e) {
                             System.out.println("Invalid user type");
+                            continue;
                         }
                         break;
                     default:
@@ -88,7 +91,7 @@ public class UserService {
     public void viewAllUser() {
         System.out.println("Users list");
         List<User> usersList = userDao.findAll();
-        for (int i = 0; i < usersList.size(); i++) usersList.get(i).toString();
+        for (int i = 0; i < usersList.size(); i++) System.out.println(usersList.get(i).toString());
     }
     
     public void viewUser() {
@@ -101,25 +104,37 @@ public class UserService {
                 String option = scn.nextLine().toLowerCase();
                 switch (option) {
                     case "email":
-                        System.out.println("Enter a email: ");
-                        String email = scn.nextLine();
-                        if (email.isBlank() || !email.substring(email.length() - 11).equals("@email.com")) {
+                        try {
+                            System.out.println("Enter a email: ");
+                            String email = scn.nextLine();
+                            if (email.isBlank() || !email.substring(email.length() - 10).equals("@email.com")) {
+                                System.out.println("Invalid email");
+                                continue;
+                            }   
+                            user = userDao.findByEmail(email)
+                                .orElseThrow(() -> new ServiceException("User not found"));
+                            if (user == null) {
+                                System.out.println("User not found");
+                                return;
+                            }
+                            System.out.println(user.toString());
+                            return;
+                        } catch (StringIndexOutOfBoundsException e) {
                             System.out.println("Invalid email");
                             continue;
-                        }   user = userDao.findByEmail(email)
-                                .orElseThrow(() -> new ServiceException("User not found"));
-                        break;
+                        }
                     case "id":
                         try {
                             System.out.println("Enter a id");
                             Long id = Long.parseLong(scn.nextLine());
                             user = userDao.findById(id)
                                     .orElseThrow(() -> new ServiceException("User not found"));
+                            System.out.println(user.toString());
+                            return;
                         } catch (NumberFormatException e) {
                             System.out.println("Invalid id");
                             continue;
-                        }   
-                        break;
+                        }
                     default:
                         continue;
                 }

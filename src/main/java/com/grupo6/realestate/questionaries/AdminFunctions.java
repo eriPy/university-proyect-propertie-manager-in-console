@@ -1,29 +1,59 @@
 package com.grupo6.realestate.questionaries;
-
-import com.grupo6.realestate.dao.AdminDao;
 import com.grupo6.realestate.dao.UserDao;
 import com.grupo6.realestate.service.AdminService;
 import com.grupo6.realestate.entity.Admin;
 import com.grupo6.realestate.service.UserService;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class AdminFunctions {
     private final AdminService adminService;
+    private final Map<Integer, Runnable> adminActions = new HashMap<>();
+    private Admin currentAdmin;
     
     public AdminFunctions(
-        AdminService adminService
+        AdminService adminService,
+        UserService userService,
+        TransactionFuncions transactionFuncions
     ) {
         this.adminService = adminService;
+        adminActions.put(1, () -> {
+            System.out.println("Adding a new Admin");
+            adminService.addNewAdmin();
+        });
+        adminActions.put(2, () -> {
+            System.out.println("Adding a new User");
+            userService.addUser();
+        });
+        adminActions.put(3, () -> {
+            System.out.println("Your profile");
+            System.out.println(currentAdmin.toString());
+        });
+        adminActions.put(4, () -> {
+            System.out.println("All admins");
+            adminService.viewAllAdmins();
+        });
+        adminActions.put(5, () -> {
+            System.out.println("User details");
+            userService.viewUser();
+        });
+        adminActions.put(6, () -> {
+            System.out.println("All users");
+            userService.viewAllUser();
+        });
+        adminActions.put(7, () -> {
+            System.out.println("Processing a transaction...");
+            transactionFuncions.questionary();
+        });
     }
     
     public void adminQuestionary() {
-        UserService userService = new UserService(new UserDao());
-        TransactionFuncions transactionFuncions = new TransactionFuncions();
         Scanner scn = new Scanner(System.in);
         System.out.println("Interface admin running");
         System.out.println("Admin verification");
-        Admin admin = adminService.verifyAdmin();
-        if (admin == null) {
+        currentAdmin = adminService.verifyAdmin();
+        if (currentAdmin == null) {
             System.out.println("Invalid admin");
             return;
         } else {
@@ -33,53 +63,28 @@ public class AdminFunctions {
             try {
                 System.out.println("This is the admin questionnaire.");
                 System.out.println("As a admin, you can choose from the following functions");
-                System.out.println(
-                    "1. Add an admin\n" +
-                    "2. Add a user\n" +
-                    "3. View profile\n" +
-                    "4. View all admins\n" +
-                    "5. View a user\n" +
-                    "6. View all users\n" +
-                    "7. Process a transaction\n" +
-                    "8. Shut down admin questionnaire"
-                );
+                System.out.println("""
+                    1. Add an admin
+                    2. Add a user
+                    3. View profile
+                    4. View all admins
+                    5. View a user
+                    6. View all users
+                    7. Process a transaction
+                    8. Shut down admin questionnaire
+                """);
                 int option = Integer.parseInt(scn.nextLine());
-                switch (option) {
-                    case 1:
-                        System.out.println("Adding a new Admin");
-                        adminService.addNewAdmin(admin);
-                        break;
-                    case 2:
-                        System.out.println("Adding a new User");
-                        userService.addUser();
-                        break;
-                    case 3:
-                        System.out.println("Your profile");
-                        System.out.println(admin.toString());
-                        break;
-                    case 4:
-                        System.out.println("All admins");
-                        adminService.viewAllAdmins();
-                        break;
-                    case 5:
-                        System.out.println("User details");
-                        userService.viewUser();
-                        break;
-                    case 6:
-                        System.out.println("All users");
-                        userService.viewAllUser();
-                        break;
-                    case 7:
-                        System.out.println("Processing a transaction...");
-                        transactionFuncions.questionary();
-                        break;
-                    case 8:
+                if (option < 8 && option > 0) {
+                    Runnable action = adminActions.get(option);
+                    action.run();
+                } else {
+                    if (option == 8) {
                         System.out.println("Closing questionnaire");
                         return;
-                    default:
+                    } else {
                         System.out.println("Invalid option");
+                    }
                 }
-            
             } catch (NumberFormatException e) {
                 System.err.println("Invalid option");
             } catch (Exception e) {

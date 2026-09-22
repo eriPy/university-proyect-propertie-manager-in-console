@@ -15,10 +15,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.chrono.MinguoEra;
+import org.hibernate.annotations.Check;
 
 @Entity 
-@Table(name = "transactions", schema = "real_state_db")
+@Table(
+    name = "transactions", 
+    schema = "real_state_db"
+)
+@Check(constraints = "market_transaction NOT IN ('LEASE', 'RENOVATION', 'REPAIRS') OR transaction_end_date IS NOT NULL")
 public class Transaction {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +48,7 @@ public class Transaction {
     private LocalDateTime transactionDate;
     
     @Column(name = "transaction_end_date")
-    private LocalDateTime transactionEndData;
+    private LocalDateTime transactionEndDate;
     
     public Long getId() {return id;}
 
@@ -58,7 +62,7 @@ public class Transaction {
 
     public LocalDateTime getTransactionDate() {return transactionDate;}
     
-    public LocalDateTime getTransactionEndDate() {return transactionEndData;}
+    public LocalDateTime getTransactionEndDate() {return transactionEndDate;}
     
     public void setPropertie(Propertie propertie) {
         if (propertie == null) throw new InvalidDataRequest("The propertie is invalid");
@@ -83,7 +87,7 @@ public class Transaction {
     }
     
     public void setTransactionEndDateTime(LocalDateTime transactionEndDate) {
-        if (transactionEndData == null) throw new InvalidDataRequest("The transaction end date is invalid");
-        this.transactionEndData = transactionEndData;
+        if (transactionEndDate == null) throw new InvalidDataRequest("The transaction end date is invalid");
+        this.transactionEndDate = transactionEndDate;
     }
 }

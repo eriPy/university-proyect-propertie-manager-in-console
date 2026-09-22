@@ -16,4 +16,12 @@ public class PropertieService {
     public void addPropertie() {
         
     }
+    
+    public void assign() {
+        
+    }
+    
+    public void report() {
+        
+    }
 }

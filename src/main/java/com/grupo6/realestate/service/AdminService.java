@@ -32,9 +32,9 @@ public class AdminService {
         }
     }
     
-    public void addNewAdmin(Admin admin) {
+    public void addNewAdmin() {
+        Scanner scn = new Scanner(System.in);
         while (true) {
-            Scanner scn = new Scanner(System.in);
             System.out.println("Enter the new admin's name");
             String adminName = scn.nextLine();
             if (adminName.isBlank()) {

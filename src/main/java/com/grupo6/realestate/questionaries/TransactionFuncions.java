@@ -1,13 +1,11 @@
 package com.grupo6.realestate.questionaries;
 
 import com.grupo6.realestate.entity.enums.MarketTransaction;
-import com.grupo6.realestate.exceptions.ServiceException;
 import com.grupo6.realestate.service.TransactionService;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class TransactionFuncions {
-
     public void questionary() {
         Scanner scn = new Scanner(System.in);
         TransactionService transactionService = new TransactionService();
@@ -15,14 +13,15 @@ public class TransactionFuncions {
         while (true) {
             try {
                 System.out.println("Transaction questionnaire");
-                System.out.println(
-                    "1. Search transactions by type\n" + 
-                    "2. Process a transaction\n" + 
-                    "3. hut down Transaction questionnaire"
-                );
+                System.out.println("""
+                    1. Search transactions by type
+                    2. Process a transaction
+                    3. hut down Transaction questionnaire
+                """);
                 int option = Integer.parseInt(scn.nextLine());
                 switch (option) {
                     case 1:
+                        transactionService.searchTransaction();
                         break;
                     case 2:
                         while (true) {
@@ -42,6 +41,7 @@ public class TransactionFuncions {
                         }
                         break;
                     case 3:
+                        System.out.println("Leave transaction questionnaire");
                         return;
                     default:
                         System.out.println("Invalid option");

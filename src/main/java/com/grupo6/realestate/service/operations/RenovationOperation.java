@@ -14,102 +14,162 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Scanner;
 
 public interface RenovationOperation extends Evaluate {
+
     default void renovation() {
+
         Scanner scn = new Scanner(System.in);
-        System.out.println("Lease process..,");
-        System.out.println("if want to cancel write cancel");
+
+        System.out.println("Renovation process...");
+        System.out.println("If you want to cancel, write cancel");
+
         UserDao userDao = new UserDao();
         PropertieDao propertieDao = new PropertieDao();
         TransactionDao transactionDao = new TransactionDao();
+
         Propertie property = null;
         User user = null;
         BigDecimal cost = null;
         LocalDateTime endDate = null;
-        String[] process = {"Propertie Information", "Custodian", "Transaction amount", "Final renovation"};
+
+        String[] process = {
+            "Propertie Information",
+            "Custodian",
+            "Transaction amount",
+            "Final renovation"
+        };
+
         for (String step : process) {
+
             System.out.println(step);
+
             while (true) {
+
                 try {
+
                     switch (step) {
+
                         case "Propertie Information":
+
                             System.out.println("Enter the property id");
-                            String dataId = scn.nextLine();
+
+                            String dataId = scn.nextLine().trim();
+
                             if (dataId.isBlank()) {
-                                System.out.println("Enter a property d");
+                                System.out.println("Enter a property id");
                                 continue;
                             }
+
                             evaluateData(dataId);
+
                             property = propertieDao.findById(Long.valueOf(dataId))
-                                    .orElseThrow(() -> new InvalidDataRequest("Property not found"));
+                                    .orElseThrow(() ->
+                                            new InvalidDataRequest("Property not found"));
+
                             break;
-                        case "Buyer's Information":
-                            System.out.println("Enter the buyer email");
-                            String buyer = scn.nextLine();
+
+                        case "Custodian":
+
+                            System.out.println("Enter the custodian email");
+
+                            String buyer = scn.nextLine().trim();
+
                             if (buyer.isBlank()) {
                                 System.out.println("Invalid user email");
                                 continue;
                             }
+
                             evaluateData(buyer);
-                            if (!buyer.substring(buyer.length() - 10).equals("@email.com")) {
+
+                            if (!buyer.endsWith("@email.com")) {
                                 System.out.println("Invalid email");
                                 continue;
                             }
+
                             user = userDao.findByEmail(buyer)
-                                    .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(() ->
+                                            new InvalidDataRequest("User not found"));
+
                             break;
+
                         case "Transaction amount":
+
                             System.out.println("Enter the renewal fee");
-                            String res = scn.nextLine();
+
+                            String res = scn.nextLine().trim();
+
                             if (res.isBlank()) {
-                                System.out.println("Enter a answer");
+                                System.out.println("Enter an answer");
                                 continue;
                             }
+
                             evaluateData(res);
-                            if (Integer.parseInt(res) <= 0) {
+
+                            cost = new BigDecimal(res);
+
+                            if (cost.compareTo(BigDecimal.ZERO) <= 0) {
                                 System.out.println("Invalid cost");
                                 continue;
                             }
-                            cost = new BigDecimal(res);
+
                             break;
+
                         case "Final renovation":
+
                             System.out.println("When will it be available?");
-                            String stringDate = scn.nextLine();
+
+                            String stringDate = scn.nextLine().trim();
+
                             if (stringDate.isBlank()) {
                                 System.out.println("Invalid date");
                                 continue;
                             }
+
                             evaluateData(stringDate);
-                            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                                .withResolverStyle(ResolverStyle.STRICT);
-                            LocalDate date = LocalDate.parse(stringDate.trim(), format);
+
+                            DateTimeFormatter format =
+                                    DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                                            .withResolverStyle(ResolverStyle.STRICT);
+
+                            LocalDate date = LocalDate.parse(stringDate, format);
+
                             endDate = date.atStartOfDay();
+
                             break;
+
                         default:
                             throw new TransactionException("Something went wrong");
                     }
+
                     break;
+
                 } catch (NumberFormatException e) {
                     System.err.println("Failed to read the value");
-                } catch (TransactionException e) {
-                    System.err.println("Failed to request data: " + e.getMessage());
+
+                } catch (DateTimeParseException e) {
+                    System.err.println("Invalid date format. Use dd/MM/yyyy");
+
                 } catch (StringIndexOutOfBoundsException e) {
-                    System.err.println("Invalid to request data: " + e.getMessage());
+                    System.err.println("Invalid data: " + e.getMessage());
                 }
             }
         }
+
         property.setListingStatus(ListingStatus.UNDER_REPAIR);
         propertieDao.savePropertie(property);
+
         Transaction transaction = new Transaction(
-            property,
-            user,
-            cost,
-            MarketTransaction.RENOVATION,
-            endDate
+                property,
+                user,
+                cost,
+                MarketTransaction.RENOVATION,
+                endDate
         );
+
         transactionDao.saveTransaction(transaction);
     }
 }

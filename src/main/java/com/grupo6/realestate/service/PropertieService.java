@@ -10,7 +10,32 @@ import com.grupo6.realestate.entity.enums.PropertyCondition;
 
 public class PropertieService implements Evaluate {
     public void searchPropertie() {
-
+        Scanner scn = new Scanner(System.in);
+        PropertieDao propertieDao = new PropertieDao();
+        Propertie propertie = null;
+        while (true) {
+            System.out.println("Searching a property\nSeach by id or search by preferences (preferences)");
+            String option = scn.nextLine();
+            if (option.isBlank()) {
+                System.out.println("Invalid option");
+                continue;
+            }
+            if (option.equalsIgnoreCase("exit") || option.equalsIgnoreCase("cancel")) {
+                return;
+            }
+            if (option.equalsIgnoreCase("preferences")) {
+                break;
+            }
+            try {
+                propertie = propertieDao.findById(Long.valueOf(option))
+                    .orElseThrow(() -> new InvalidDataRequest("Property not found"));
+                System.out.println(propertie.toString());
+                return;
+            } catch (Exception e) {
+                System.out.println("Invaid data request: " + e.getMessage());
+            }
+        }
+        String[] preferences = {};
     }
 
     public void report() {

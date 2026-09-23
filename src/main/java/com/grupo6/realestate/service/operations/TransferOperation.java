@@ -55,6 +55,10 @@ public interface TransferOperation extends Evaluate {
                             }
                             user = userDao.findByEmail(buyer)
                                 .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                            if (!user.getEmail().equals(buyer)) {
+                                System.out.println("This user is invalid");
+                                continue;
+                            }
                             break;
                         case "New Custodian":
                             System.out.println("Enter the new custodian email");
@@ -68,7 +72,11 @@ public interface TransferOperation extends Evaluate {
                                 System.out.println("Invalid email");
                                 continue;
                             }
-                            user = userDao.findByEmail(newCustodian)
+                            if (newCustodian.equals(user.getEmail())) {
+                                System.out.println("The new Custodian cannot be the old custodian");
+                                continue;
+                            }
+                            newUser = userDao.findByEmail(newCustodian)
                                 .orElseThrow(() -> new InvalidDataRequest("User not found"));
                             break;
                         default:

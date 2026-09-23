@@ -82,7 +82,7 @@ public interface LeaseOperation extends Evaluate {
                             }
                             break;
                         case "Termination date":
-                            System.out.println("When will the termination date be?");
+                            System.out.println("When will the termination date be? use dd/MM/yyyy");
                             String stringDate = scn.nextLine().trim();
                             if (stringDate.isBlank()) {
                                 System.out.println("Invalid date");
@@ -108,7 +108,7 @@ public interface LeaseOperation extends Evaluate {
             }
         }
         property.setListingStatus(ListingStatus.RENTED);
-        propertieDao.savePropertie(property);
+        propertieDao.report(property);
         Transaction transaction = new Transaction(
             property,
             user,

@@ -58,10 +58,13 @@ public class TransactionService
                 evaluateData(option);
                 MarketTransaction getEnum = MarketTransaction.valueOf(option);
                 List<Transaction> transactions = transactionDao.findByTransactionType(getEnum);
-                for (Transaction transaction: transactions) {
-                    System.out.println("\n" + transaction.toString() + "\n");
+                if (transactions.size() == 0) {
+                    System.out.println("This type transactions not found");
+                } else {
+                    for (Transaction transaction: transactions) {
+                        System.out.println("\n" + transaction.toString() + "\n");
+                    }
                 }
-            
             } catch (IllegalArgumentException e) {
                 System.err.println("Invalid data: " + e.getMessage());
             }

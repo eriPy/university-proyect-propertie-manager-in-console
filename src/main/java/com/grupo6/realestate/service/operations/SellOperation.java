@@ -267,7 +267,7 @@ public interface SellOperation extends Evaluate {
             }
         }
         property.setListingStatus(ListingStatus.SOLD);
-        propertieDao.savePropertie(property);
+        propertieDao.report(property);
         Transaction transaction = new Transaction(
             property,
             user,

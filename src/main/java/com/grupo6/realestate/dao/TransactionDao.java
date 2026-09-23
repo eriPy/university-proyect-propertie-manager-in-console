@@ -25,8 +25,11 @@ public class TransactionDao {
         EntityManager em = JpaUtil.getEntityManager();
         try {
             return em.createQuery(
-                "SELECT t FROM Transaction t", Transaction.class
-            ).getResultList();
+                "SELECT t FROM Transaction t WHERE t.marketTransaction = :type", 
+                    Transaction.class
+            )
+            .setParameter("type", transactionType)
+            .getResultList();
         } finally {
             em.close();
         }

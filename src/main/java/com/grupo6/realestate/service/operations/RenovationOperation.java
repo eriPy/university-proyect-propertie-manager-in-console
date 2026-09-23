@@ -82,7 +82,7 @@ public interface RenovationOperation extends Evaluate {
                             }
                             break;
                         case "Final renovation":
-                            System.out.println("When will it be available?");
+                            System.out.println("When will it be available? use the format dd/MM/yyyy");
                             String stringDate = scn.nextLine().trim();
                             if (stringDate.isBlank()) {
                                 System.out.println("Invalid date");
@@ -108,7 +108,7 @@ public interface RenovationOperation extends Evaluate {
             }
         }
         property.setListingStatus(ListingStatus.UNDER_REPAIR);
-        propertieDao.savePropertie(property);
+        propertieDao.report(property);
         Transaction transaction = new Transaction(
             property,
             user,

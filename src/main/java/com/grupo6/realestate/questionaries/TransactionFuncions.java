@@ -26,9 +26,13 @@ public class TransactionFuncions {
                     case 2:
                         while (true) {
                             try {
-                                System.err.println("Which type of transaction would you like to perfom?");
+                                System.out.println("Write exit if you want to exit");
+                                System.out.println("Which type of transaction would you like to perfom?");
                                 Stream.of(MarketTransaction.values()).forEach(System.out::println);
                                 String input = scn.nextLine().toUpperCase();
+                                if (input.equals("EXIT")) {
+                                    return;
+                                }
                                 MarketTransaction transactionType = MarketTransaction.valueOf(input);
                                 transactionService.processTransaction(transactionType);
                                 break;

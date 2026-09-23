@@ -78,6 +78,7 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Location information":
                             System.out.println("Enter the location");
+                            Stream.of(Department.values()).forEach(System.out::println);
                             String stringDepartment = scn.nextLine().toUpperCase();
                             if (stringDepartment.isBlank()) {
                                 System.out.println("Enter a location");
@@ -88,6 +89,7 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Property informacion":
                             System.out.println("Enter the propertie type");
+                            Stream.of(RealStateCategory.values()).forEach(System.out::println);
                             String stringPropertieType = scn.nextLine().toUpperCase();
                             if (stringPropertieType.isBlank()) {
                                 System.out.println("Enter a propertie type");
@@ -104,6 +106,10 @@ public interface SellOperation extends Evaluate {
                                 continue;
                             }
                             evaluateData(stringArea);
+                            if (Integer.parseInt(stringArea) <= 0) {
+                                System.out.println("Invalid area");
+                                continue;
+                            }
                             area = Double.parseDouble(stringArea);
                             break;
                         case "Status Information":
@@ -152,8 +158,10 @@ public interface SellOperation extends Evaluate {
                 } catch (TransactionException e) {
                     System.err.println("Failed to request data: " + e.getMessage());
                 } catch (StringIndexOutOfBoundsException e) {
-                    System.err.println("Invalid to request data: " + e.getMessage());
-                }
+                    System.err.println("Invalid request data: " + e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Invalid request data: " + e.getMessage());
+                } 
             }
         }
         Propertie propertie = new Propertie(
@@ -216,10 +224,10 @@ public interface SellOperation extends Evaluate {
                                 .orElseThrow(() -> new InvalidDataRequest("User not found"));
                             break;
                         case "Transaction amount":
-                            System.out.println("You want to change the asking price? yes/no");
+                            System.out.println("You want to change the asking price? yes?");
                             String res = scn.nextLine();
                             if (res.isBlank()) {
-                                System.out.println("Enter a answer");
+                            System.out.println("Enter a answer");
                                 continue;
                             }
                             evaluateData(res);
@@ -248,7 +256,9 @@ public interface SellOperation extends Evaluate {
                     System.err.println("Failed to request data: " + e.getMessage());
                 } catch (StringIndexOutOfBoundsException e) {
                     System.err.println("Invalid to request data: " + e.getMessage());
-                }
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Invalid request data: " + e.getMessage());
+                } 
             }
         }
         property.setListingStatus(ListingStatus.SOLD);

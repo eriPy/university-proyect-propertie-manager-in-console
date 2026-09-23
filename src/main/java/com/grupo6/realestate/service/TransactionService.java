@@ -36,5 +36,10 @@ public class TransactionService
     }    
    
     public void searchTransaction() {
+        System.out.println("Searching transaction...");
+        System.out.println("Write exit if you want to exit");
+        while (true) {
+            System.out.println("Enter the transaction type");
+        }
     }
 }

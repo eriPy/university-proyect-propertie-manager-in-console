@@ -18,8 +18,10 @@ public class PropertieService implements Evaluate {
         Scanner scn = new Scanner(System.in);
         PropertieDao propertieDao = new PropertieDao();
         Propertie propertie = null;
+        System.out.println("If you want to exit write exit or cancel");
         while (true) {
             System.out.println("Searching a property\nSeach by id or search by preferences (preferences)");
+            System.out.println("If you want to search by id only write an id");
             String option = scn.nextLine();
             if (option.isBlank()) {
                 System.out.println("Invalid option");
@@ -50,6 +52,7 @@ public class PropertieService implements Evaluate {
         Department department = null;
         ListingStatus status = null;
         PropertyCondition condition = null;
+        int count = 0;
         String[] preferences = {"cost", "price", "area", "category", "department", "status", "condition"};
         System.out.println("If you don't want to check something, write skip");
         for (String preference : preferences) {
@@ -57,19 +60,23 @@ public class PropertieService implements Evaluate {
             while (true) {
                 try {
                     System.out.println("Search by " + preference);
+                    // problema al elegir max o min
                     switch (preference) {
                         case "cost", "price", "area":
                             System.out.println("Are you looking for a higher or lower price? max/min");
-                            String option = scn.nextLine();
+                            String option = scn.nextLine().toLowerCase();
                             if (option.isBlank()) {
                                 System.out.println("Enter a valid value");
                                 continue;
                             }
-                            if (option.equals("skip")) break skipPreferences;
+                            if (option.equals("skip")) {
+                                count++;
+                                break skipPreferences;
+                            }
                             evaluateData(option);
                             Boolean min = option.equalsIgnoreCase("min");
-                            if (!option.equalsIgnoreCase("max") || !option.equalsIgnoreCase("min")) {
-                                System.out.println("");
+                            if (!option.equalsIgnoreCase("max") && !option.equalsIgnoreCase("min")) {
+                                System.out.println("Invalid option");
                                 continue;
                             }
                             System.out.println("What price are you looking for?");
@@ -92,7 +99,7 @@ public class PropertieService implements Evaluate {
                                     minArea = min;
                                     break;
                             }
-                            break;
+                            break skipPreferences;
                         case "category", "department", "status", "condition":
                             System.out.println("What are you looking for?");
                             Stream.of(
@@ -105,39 +112,48 @@ public class PropertieService implements Evaluate {
                                 System.out.println("Enter a valid value");
                                 continue;
                             }
-                            if (select.equals("skip")) break skipPreferences;
+                            if (select.equals("skip")) {
+                                count++;
+                                break skipPreferences;
+                            }
                             switch (preference) {
                                 case "category" -> category = RealStateCategory.valueOf(select);
                                 case "department" -> department = Department.valueOf(select);
                                 case "status" -> status = ListingStatus.valueOf(select);
                                 case "condition" -> condition = PropertyCondition.valueOf(select);
                             }
-                            break;
+                            break skipPreferences;
                     }
+                    
                 } catch (Exception e) {
                     System.out.println("Invalid data request: " + e.getMessage());
                 }
             }
         }
-        List<Propertie> properties = propertieDao
+        if (count == preferences.length) {
+            System.out.println("Not preferences select");
+        } else {
+            List<Propertie> properties = propertieDao
                 .searchByPreferences(
-                        cost,
-                        minCost,
-                        price,
-                        minPrice,
-                        area,
-                        minArea,
-                        category,
-                        department,
-                        status,
-                        condition
-                );
-        System.out.println("Properties found:");
-        if (properties.size() == 0) {
-            System.out.println("Properties not found");
-        }
-        for (Propertie property : properties) {
-            System.out.println(propertie.toString());
+                    cost,
+                    minCost,
+                    price,
+                    minPrice,
+                    area,
+                    minArea,
+                    category,
+                    department,
+                    status,
+                    condition
+            );
+            System.out.println("Properties found:");
+            if (properties.size() == 0) {
+                System.out.println("Properties not found");
+                return;
+            }
+            for (Propertie property : properties) {
+                System.out.println(property.toString());
+            }
         }
     }
 

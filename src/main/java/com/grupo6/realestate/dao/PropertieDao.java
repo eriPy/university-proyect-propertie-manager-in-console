@@ -55,18 +55,15 @@ public class PropertieDao {
             );
             if (acquisitionCost != null) {
                 incompleteQuery.append(" AND p.acquisitionCost ");
-                incompleteQuery.append(minCost ? "<" : ">");
-                incompleteQuery.append("= :cost");
+                incompleteQuery.append(minCost ? "<= :cost" : ">= :cost");
             }
             if (askingPrice != null) {
                 incompleteQuery.append(" AND p.askingPrice ");
-                incompleteQuery.append(minPrice ? "<" : ">");
-                incompleteQuery.append("= :price");
+                incompleteQuery.append(minPrice ? "<= :price" : ">= :price");
             }
             if (area != null) {
                 incompleteQuery.append(" AND p.area ");
-                incompleteQuery.append(minArea ? "<" : ">");
-                incompleteQuery.append("= :area");
+                incompleteQuery.append(minArea ? "<= :area" : ">= :area");
             }
             if (category != null) incompleteQuery.append(" AND p.category = :category");
             if (department != null) incompleteQuery.append(" AND p.department = :department");

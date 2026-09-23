@@ -29,7 +29,7 @@ public class Main {
             System.out.println("""
                 1. Admin functions
                 2. Search properties
-                4. Shut down programn\n
+                3. Shut down programn\n
             """);
             try {
                 int option = Integer.parseInt(scn.nextLine());

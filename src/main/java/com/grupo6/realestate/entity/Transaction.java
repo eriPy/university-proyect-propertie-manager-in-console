@@ -23,6 +23,7 @@ import org.hibernate.annotations.Check;
     schema = "real_state_db"
 )
 @Check(constraints = "market_transaction NOT IN ('LEASE', 'RENOVATION', 'REPAIRS') OR transaction_end_date IS NOT NULL")
+@Check(constraints = "market_transaction NOT IN ('LEASE', 'RENOVATION', 'REPAIRS', 'SALE') OR transaction_amount IS NOT NULL")
 public class Transaction {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +37,7 @@ public class Transaction {
     @JoinColumn(name = "propertie_custodian", nullable = false)
     private User propertieCustodian;
 
-    @Column(name = "transaction_amount", nullable = false)
+    @Column(name = "transaction_amount")
     private BigDecimal transactionAmount;
 
     @Enumerated(EnumType.STRING)
@@ -55,6 +56,16 @@ public class Transaction {
     public Transaction(
         Propertie propertie,
         User propertieCustodian,
+        MarketTransaction marketTransaction
+    ) {
+        this.propertie = propertie;
+        this.propertieCustodian = propertieCustodian;
+        this.marketTransaction = marketTransaction;
+    }
+    
+    public Transaction(
+        Propertie propertie,
+        User propertieCustodian,
         BigDecimal transactionAmount,
         MarketTransaction marketTransaction
     ) {
@@ -62,6 +73,17 @@ public class Transaction {
         this.propertieCustodian = propertieCustodian;
         this.transactionAmount = transactionAmount;
         this.marketTransaction = marketTransaction;
+    }
+    
+    public Transaction(
+        Propertie propertie,
+        User propertieCustodian,
+        BigDecimal transactionAmount,
+        MarketTransaction marketTransaction,
+        LocalDateTime transactionEndDate
+    ) {
+        this(propertie, propertieCustodian, transactionAmount, marketTransaction);
+        this.transactionEndDate = transactionEndDate;
     }
     
     public Long getId() {return id;}

@@ -1,8 +1,8 @@
 package com.grupo6.realestate.entity.enums;
 
 public enum MarketTransaction {
-    SALE, // compra o venta
-    LEASE, // Alquilada
+    SALE, 
+    LEASE, 
     TRANSFER, // se la dieron (que envidia)
     RENOVATION, 
     REPAIRS

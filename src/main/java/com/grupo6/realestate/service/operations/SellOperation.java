@@ -19,6 +19,7 @@ import com.grupo6.realestate.exceptions.TransactionException;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public interface SellOperation extends Evaluate {
 
@@ -107,6 +108,8 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Status Information":
                             System.out.println("Enter the propertie status");
+                            System.out.println("The condition can be:");
+                            Stream.of(PropertyCondition.values()).forEach(System.out::println);
                             String stringStatus = scn.nextLine().toUpperCase();
                             if (stringStatus.isBlank()) {
                                 System.out.println("Enter a status");

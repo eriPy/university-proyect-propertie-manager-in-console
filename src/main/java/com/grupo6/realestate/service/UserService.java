@@ -5,7 +5,6 @@ import com.grupo6.realestate.entity.User;
 import com.grupo6.realestate.entity.enums.UserType;
 import com.grupo6.realestate.exceptions.ServiceException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 

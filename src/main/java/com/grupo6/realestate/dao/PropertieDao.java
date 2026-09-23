@@ -27,6 +27,20 @@ public class PropertieDao {
         }
     }
     
+    public void report(Propertie propertie) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(propertie);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
     public Optional<Propertie> findById(Long id) {
         EntityManager em = JpaUtil.getEntityManager();
         try {

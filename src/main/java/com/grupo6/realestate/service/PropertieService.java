@@ -60,7 +60,6 @@ public class PropertieService implements Evaluate {
             while (true) {
                 try {
                     System.out.println("Search by " + preference);
-                    // problema al elegir max o min
                     switch (preference) {
                         case "cost", "price", "area":
                             System.out.println("Are you looking for a higher or lower price? max/min");
@@ -165,6 +164,7 @@ public class PropertieService implements Evaluate {
         Propertie propertie = null;
         for (String step : process) {
             try {
+                searching:
                 while (true) {
                     switch (step) {
                         case "Property information":
@@ -178,23 +178,24 @@ public class PropertieService implements Evaluate {
                             evaluateData(stringId);
                             propertie = propertieDao.findById(Long.valueOf(stringId))
                                     .orElseThrow(() -> new InvalidDataRequest("Propertie not found"));
-                            break;
+                            break searching;
                         case "Report":
                             System.out.println("Property:");
                             System.out.println(propertie.toString() + "\nCondition: " + propertie.getPropertyCondition());
                             System.out.println("Enter the property condition report");
                             Stream.of(PropertyCondition.values()).forEach(System.out::println);
-                            String condition = scn.nextLine();
+                            String condition = scn.nextLine().toUpperCase();
                             if (condition.isBlank()) {
                                 System.out.println("Invalid condition");
+                                continue;
                             }
                             evaluateData(condition);
                             propertie.setPropertyCondition(PropertyCondition.valueOf(condition));
-                            propertieDao.savePropertie(propertie);
+                            propertieDao.report(propertie);
                             System.out.println("The report was made");
                             return;
                         default:
-                            throw new AssertionError();
+                            throw new InvalidDataRequest("Something went wrong");
                     }
                 }
             } catch (NumberFormatException e) {

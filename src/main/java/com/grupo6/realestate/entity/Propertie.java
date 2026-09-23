@@ -53,6 +53,28 @@ public class Propertie {
     @Column(name = "property_condition", nullable = false)
     private PropertyCondition propertyCondition;
     
+    public Propertie() {}
+    
+    public Propertie(
+        Admin admin,
+        BigDecimal acquisitionCost,
+        BigDecimal askingPrice,
+        double area,
+        RealStateCategory category,
+        Department department,
+        ListingStatus listingStatus,
+        PropertyCondition propertyCondition
+    ) {
+        this.admin = admin;
+        this.acquisitionCost = acquisitionCost;
+        this.askingPrice = askingPrice;
+        this.area = area;
+        this.category = category;
+        this.department = department;
+        this.listingStatus = listingStatus;
+        this.propertyCondition = propertyCondition;
+    }
+    
     public Long getId() {return id;}
 
     public Admin getAdmin() {return admin;}

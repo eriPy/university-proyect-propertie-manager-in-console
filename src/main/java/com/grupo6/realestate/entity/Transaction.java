@@ -50,6 +50,20 @@ public class Transaction {
     @Column(name = "transaction_end_date")
     private LocalDateTime transactionEndDate;
     
+    public Transaction() {}
+    
+    public Transaction(
+        Propertie propertie,
+        User propertieCustodian,
+        BigDecimal transactionAmount,
+        MarketTransaction marketTransaction
+    ) {
+        this.propertie = propertie;
+        this.propertieCustodian = propertieCustodian;
+        this.transactionAmount = transactionAmount;
+        this.marketTransaction = marketTransaction;
+    }
+    
     public Long getId() {return id;}
 
     public Propertie getPropertie() {return propertie;}

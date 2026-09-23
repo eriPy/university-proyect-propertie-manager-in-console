@@ -4,9 +4,14 @@ import com.grupo6.realestate.dao.PropertieDao;
 import com.grupo6.realestate.service.operations.Evaluate;
 import java.util.Scanner;
 import com.grupo6.realestate.entity.Propertie;
+import com.grupo6.realestate.entity.enums.Department;
+import com.grupo6.realestate.entity.enums.ListingStatus;
 import com.grupo6.realestate.exceptions.InvalidDataRequest;
 import java.util.stream.Stream;
 import com.grupo6.realestate.entity.enums.PropertyCondition;
+import com.grupo6.realestate.entity.enums.RealStateCategory;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class PropertieService implements Evaluate {
     public void searchPropertie() {
@@ -28,14 +33,112 @@ public class PropertieService implements Evaluate {
             }
             try {
                 propertie = propertieDao.findById(Long.valueOf(option))
-                    .orElseThrow(() -> new InvalidDataRequest("Property not found"));
+                        .orElseThrow(() -> new InvalidDataRequest("Property not found"));
                 System.out.println(propertie.toString());
                 return;
             } catch (Exception e) {
                 System.out.println("Invaid data request: " + e.getMessage());
             }
         }
-        String[] preferences = {};
+        BigDecimal cost = null;
+        Boolean minCost = null;
+        BigDecimal price = null;
+        Boolean minPrice = null;
+        Double area = null;
+        Boolean minArea = null;
+        RealStateCategory category = null;
+        Department department = null;
+        ListingStatus status = null;
+        PropertyCondition condition = null;
+        String[] preferences = {"cost", "price", "area", "category", "department", "status", "condition"};
+        System.out.println("If you don't want to check something, write skip");
+        for (String preference : preferences) {
+            skipPreferences:
+            while (true) {
+                try {
+                    System.out.println("Search by " + preference);
+                    switch (preference) {
+                        case "cost", "price", "area":
+                            System.out.println("Are you looking for a higher or lower price? max/min");
+                            String option = scn.nextLine();
+                            if (option.isBlank()) {
+                                System.out.println("Enter a valid value");
+                                continue;
+                            }
+                            if (option.equals("skip")) break skipPreferences;
+                            evaluateData(option);
+                            Boolean min = option.equalsIgnoreCase("min");
+                            if (!option.equalsIgnoreCase("max") || !option.equalsIgnoreCase("min")) {
+                                System.out.println("");
+                                continue;
+                            }
+                            System.out.println("What price are you looking for?");
+                            String stringValue = scn.nextLine();
+                            if (stringValue.isBlank()) {
+                                System.out.println("Enter a valid " + preference);
+                                continue;
+                            }
+                            switch (preference) {
+                                case "cost":
+                                    cost = new BigDecimal(stringValue);
+                                    minCost = min;
+                                    break;
+                                case "price":
+                                    price = new BigDecimal(stringValue);
+                                    minPrice = min;
+                                    break;
+                                case "area":
+                                    area = Double.parseDouble(stringValue);
+                                    minArea = min;
+                                    break;
+                            }
+                            break;
+                        case "category", "department", "status", "condition":
+                            System.out.println("What are you looking for?");
+                            Stream.of(
+                                preference.equals("category") ? RealStateCategory.values() :
+                                preference.equals("department") ? Department.values() :
+                                preference.equals("status") ? ListingStatus.values() : PropertyCondition.values()
+                            ).forEach(System.out::println);
+                            String select = scn.nextLine();
+                            if (select.isBlank()) {
+                                System.out.println("Enter a valid value");
+                                continue;
+                            }
+                            if (select.equals("skip")) break skipPreferences;
+                            switch (preference) {
+                                case "category" -> category = RealStateCategory.valueOf(select);
+                                case "department" -> department = Department.valueOf(select);
+                                case "status" -> status = ListingStatus.valueOf(select);
+                                case "condition" -> condition = PropertyCondition.valueOf(select);
+                            }
+                            break;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid data request: " + e.getMessage());
+                }
+            }
+        }
+        List<Propertie> properties = propertieDao
+                .searchByPreferences(
+                        cost,
+                        minCost,
+                        price,
+                        minPrice,
+                        area,
+                        minArea,
+                        category,
+                        department,
+                        status,
+                        condition
+                );
+        System.out.println("Properties found:");
+        if (properties.size() == 0) {
+            System.out.println("Properties not found");
+        }
+        for (Propertie property : properties) {
+            System.out.println(propertie.toString());
+        }
     }
 
     public void report() {
@@ -44,7 +147,7 @@ public class PropertieService implements Evaluate {
         System.out.println("Write exit or cancel to exit");
         String[] process = {"Property information", "Report"};
         Propertie propertie = null;
-        for (String step: process) {
+        for (String step : process) {
             try {
                 while (true) {
                     switch (step) {
@@ -58,7 +161,7 @@ public class PropertieService implements Evaluate {
                             }
                             evaluateData(stringId);
                             propertie = propertieDao.findById(Long.valueOf(stringId))
-                                .orElseThrow(() -> new InvalidDataRequest("Propertie not found"));
+                                    .orElseThrow(() -> new InvalidDataRequest("Propertie not found"));
                             break;
                         case "Report":
                             System.out.println("Property:");

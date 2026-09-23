@@ -3,6 +3,7 @@ package com.grupo6.realestate.dao;
 import com.grupo6.realestate.entity.Propertie;
 import com.grupo6.realestate.util.JpaUtil;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 
 public class PropertieDao {
     public void savePropertie(Propertie propertie) {
@@ -14,6 +15,15 @@ public class PropertieDao {
         } catch (Exception e) {
             em.getTransaction().rollback();
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Optional<Propertie> findById(Long id) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            return Optional.ofNullable(em.find(Propertie.class, id));
         } finally {
             em.close();
         }

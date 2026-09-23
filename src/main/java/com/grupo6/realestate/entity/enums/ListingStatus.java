@@ -5,6 +5,5 @@ public enum ListingStatus {
     FOR_SALE, // en venta o alquiler
     RENTED, // rentada
     SOLD, // vendida
-    TEMPORARILY_OFF_MARKET, // no se puede vender porque no esta el dueno o algo asi
     UNDER_REPAIR // en reparaciones
 }

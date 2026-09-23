@@ -1,7 +1,5 @@
 package com.grupo6.realestate.service;
 
-import com.grupo6.realestate.entity.Propertie;
-import com.grupo6.realestate.entity.Transaction;
 import com.grupo6.realestate.entity.enums.MarketTransaction;
 import com.grupo6.realestate.exceptions.TransactionException;
 import com.grupo6.realestate.service.operations.LeaseOperation;
@@ -11,7 +9,6 @@ import com.grupo6.realestate.service.operations.SellOperation;
 import com.grupo6.realestate.service.operations.TransferOperation;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class TransactionService
     implements SellOperation,
@@ -20,7 +17,6 @@ public class TransactionService
         RenovationOperation,
         RepairOperatoon
 {
-    private final Scanner scn = new Scanner(System.in);
     private final Map<MarketTransaction, Runnable> actions = new EnumMap<>(MarketTransaction.class);
     
     public TransactionService() {

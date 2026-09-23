@@ -29,8 +29,8 @@ public interface SellOperation extends Evaluate {
         TransactionDao transactionDao = new TransactionDao();
         // propertie variables
         Admin newManager = new Admin();
-        BigDecimal askingPrice = null; 
-        double area = 0; 
+        BigDecimal askingPrice = null;
+        double area = 0;
         RealStateCategory category = null;
         Department department = null;
         PropertyCondition propertyCondition = null;
@@ -63,7 +63,7 @@ public interface SellOperation extends Evaluate {
                             }
                             evaluateData(adminId);
                             newManager = adminDao.findById(Long.valueOf(adminId))
-                                .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(() -> new InvalidDataRequest("User not found"));
                             break;
                         case "Purchase price":
                             System.out.println("Enter the purchase price");
@@ -77,7 +77,7 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Location information":
                             System.out.println("Enter the location");
-                            String stringDepartment = scn.nextLine();
+                            String stringDepartment = scn.nextLine().toUpperCase();
                             if (stringDepartment.isBlank()) {
                                 System.out.println("Enter a location");
                                 continue;
@@ -87,7 +87,7 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Property informacion":
                             System.out.println("Enter the propertie type");
-                            String stringPropertieType = scn.nextLine();
+                            String stringPropertieType = scn.nextLine().toUpperCase();
                             if (stringPropertieType.isBlank()) {
                                 System.out.println("Enter a propertie type");
                                 continue;
@@ -107,7 +107,7 @@ public interface SellOperation extends Evaluate {
                             break;
                         case "Status Information":
                             System.out.println("Enter the propertie status");
-                            String stringStatus = scn.nextLine();
+                            String stringStatus = scn.nextLine().toUpperCase();
                             if (stringStatus.isBlank()) {
                                 System.out.println("Enter a status");
                                 continue;
@@ -138,48 +138,125 @@ public interface SellOperation extends Evaluate {
                                 continue;
                             }
                             custodian = userDao.findByEmail(userEmail)
-                                .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(() -> new InvalidDataRequest("User not found"));
                             break;
                         default:
                             throw new ServiceException("Something went wrong to buy");
                     }
                     break;
                 } catch (NumberFormatException e) {
-                    System.out.println("Failed to read the value");
+                    System.err.println("Failed to read the value");
                 } catch (TransactionException e) {
-                    System.out.println("Failed to request data: " + e.getMessage());
+                    System.err.println("Failed to request data: " + e.getMessage());
                 } catch (StringIndexOutOfBoundsException e) {
-                    System.out.println("Invalid to request data: " + e.getMessage());
+                    System.err.println("Invalid to request data: " + e.getMessage());
                 }
             }
         }
         Propertie propertie = new Propertie(
-            newManager,
-            transactionAmount,
-            askingPrice,
-            area,
-            category,
-            department,
-            ListingStatus.AVAILABLE,
-            propertyCondition
+                newManager,
+                transactionAmount,
+                askingPrice,
+                area,
+                category,
+                department,
+                ListingStatus.AVAILABLE,
+                propertyCondition
         );
         propertieDao.savePropertie(propertie);
         Transaction transaction = new Transaction(
-            propertie,
-            custodian,
-            transactionAmount,
-            MarketTransaction.SALE
-        );        
+                propertie,
+                custodian,
+                transactionAmount,
+                MarketTransaction.SALE
+        );
         transactionDao.saveTransaction(transaction);
         System.out.println("Propertie bought");
     }
 
     default void sell(Scanner scn) {
-        while (true) {
-            System.out.println("Enter the propertie id");
-            String dataId = scn.nextLine();
-            evaluateData(dataId);
+        UserDao userDao = new UserDao();
+        PropertieDao propertieDao = new PropertieDao();
+        TransactionDao transactionDao = new TransactionDao();
+        Propertie property = null;
+        User user = null;
+        String[] process = {"Propertie Information", "Buyer's Information", "Transaction amount"};
+        for (String step : process) {
+            System.out.println(step);
+            while (true) {
+                try {
+                    switch (step) {
+                        case "Propertie Information":
+                            System.out.println("Enter the property id");
+                            String dataId = scn.nextLine();
+                            if (dataId.isBlank()) {
+                                System.out.println("Enter a property d");
+                                continue;
+                            }
+                            evaluateData(dataId);
+                            property = propertieDao.findById(Long.valueOf(dataId))
+                                .orElseThrow(() -> new InvalidDataRequest("Property not found"));
+                            break;
+                        case "Buyer's Information":
+                            System.out.println("Enter the buyer email");
+                            String buyer = scn.nextLine();
+                            if (buyer.isBlank()) {
+                                System.out.println("Invalid user email");
+                                continue;
+                            }
+                            evaluateData(buyer);
+                            if (!buyer.substring(buyer.length() - 10).equals("@email.com")) {
+                                System.out.println("Invalid email");
+                                continue;
+                            }
+                            user = userDao.findByEmail(buyer)
+                                .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                            break;
+                        case "Transaction amount":
+                            System.out.println("You want to change the asking price? yes/no");
+                            String res = scn.nextLine();
+                            if (res.isBlank()) {
+                                System.out.println("Enter a answer");
+                                continue;
+                            }
+                            evaluateData(res);
+                            if (res.equals("yes")) {
+                                System.out.println("Enter the new price");
+                                String stringPrice = scn.nextLine();
+                                if (stringPrice.isBlank()) {
+                                    System.out.println("Failed to change the price");
+                                    continue;
+                                }
+                                evaluateData(stringPrice);
+                                if (Integer.parseInt(stringPrice) <= 0) {
+                                    System.out.println("Invalid price");
+                                    continue;
+                                }
+                                property.setAskingPrice(new BigDecimal(stringPrice));
+                            }
+                            break;
+                        default:
+                            throw new TransactionException("Something went wrong");
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.err.println("Failed to read the value");
+                } catch (TransactionException e) {
+                    System.err.println("Failed to request data: " + e.getMessage());
+                } catch (StringIndexOutOfBoundsException e) {
+                    System.err.println("Invalid to request data: " + e.getMessage());
+                }
+            }
         }
+        property.setListingStatus(ListingStatus.SOLD);
+        propertieDao.savePropertie(property);
+        Transaction transaction = new Transaction(
+            property,
+            user,
+            property.getAskingPrice(),
+            MarketTransaction.SALE
+        );
+        transactionDao.saveTransaction(transaction);
     }
 
     @Transactional

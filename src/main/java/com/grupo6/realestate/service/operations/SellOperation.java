@@ -24,146 +24,261 @@ import java.util.stream.Stream;
 public interface SellOperation extends Evaluate {
 
     default void buy(Scanner scn) {
+
         UserDao userDao = new UserDao();
         AdminDao adminDao = new AdminDao();
         PropertieDao propertieDao = new PropertieDao();
         TransactionDao transactionDao = new TransactionDao();
-        // propertie variables
-        Admin newManager = new Admin();
+
+        // Property variables
+        Admin newManager = null;
         BigDecimal askingPrice = null;
         double area = 0;
         RealStateCategory category = null;
         Department department = null;
         PropertyCondition propertyCondition = null;
 
-        // transaction variables
+        // Transaction variables
         User custodian = null;
         BigDecimal transactionAmount = null;
 
         String[] process = {
-            "Manager informacion",
+            "Manager information",
             "Purchase price",
             "Location information",
-            "Property informacion",
+            "Property information",
             "Area information",
-            "Status Information",
-            "New Price Information",
+            "Status information",
+            "New price information",
             "Custodian information"
         };
+
         for (String step : process) {
+
             while (true) {
+
                 try {
+
                     System.out.println(step);
+
                     switch (step) {
-                        case "Manager informacion":
+
+                        case "Manager information":
+
                             System.out.println("Enter your admin id");
                             String adminId = scn.nextLine();
+
                             if (adminId.isBlank()) {
                                 System.out.println("Invalid id");
                                 continue;
                             }
+
                             evaluateData(adminId);
+
                             newManager = adminDao.findById(Long.valueOf(adminId))
-                                    .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(
+                                            () -> new InvalidDataRequest(
+                                                    "User not found"
+                                            )
+                                    );
+
                             break;
+
                         case "Purchase price":
+
                             System.out.println("Enter the purchase price");
                             String stringPurchasePrice = scn.nextLine();
-                            evaluateData(stringPurchasePrice);
-                            if (stringPurchasePrice.isBlank() || Integer.parseInt(stringPurchasePrice) <= 0) {
+
+                            if (stringPurchasePrice.isBlank()) {
                                 System.out.println("Invalid purchase price");
                                 continue;
                             }
-                            transactionAmount = new BigDecimal(stringPurchasePrice);
+
+                            evaluateData(stringPurchasePrice);
+
+                            transactionAmount = new BigDecimal(
+                                    stringPurchasePrice
+                            );
+
+                            if (transactionAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                                System.out.println("Invalid purchase price");
+                                continue;
+                            }
+
                             break;
+
                         case "Location information":
+
                             System.out.println("Enter the location");
-                            Stream.of(Department.values()).forEach(System.out::println);
-                            String stringDepartment = scn.nextLine().toUpperCase();
+
+                            Stream.of(Department.values())
+                                    .forEach(System.out::println);
+
+                            String stringDepartment = scn.nextLine()
+                                    .trim()
+                                    .toUpperCase();
+
                             if (stringDepartment.isBlank()) {
                                 System.out.println("Enter a location");
                                 continue;
                             }
+
                             evaluateData(stringDepartment);
-                            department = Department.valueOf(stringDepartment);
+
+                            department = Department.valueOf(
+                                    stringDepartment
+                            );
+
                             break;
-                        case "Property informacion":
-                            System.out.println("Enter the propertie type");
-                            Stream.of(RealStateCategory.values()).forEach(System.out::println);
-                            String stringPropertieType = scn.nextLine().toUpperCase();
+
+                        case "Property information":
+
+                            System.out.println("Enter the property type");
+
+                            Stream.of(RealStateCategory.values())
+                                    .forEach(System.out::println);
+
+                            String stringPropertieType = scn.nextLine()
+                                    .trim()
+                                    .toUpperCase();
+
                             if (stringPropertieType.isBlank()) {
-                                System.out.println("Enter a propertie type");
+                                System.out.println(
+                                        "Enter a property type"
+                                );
                                 continue;
                             }
+
                             evaluateData(stringPropertieType);
-                            category = RealStateCategory.valueOf(stringPropertieType);
+
+                            category = RealStateCategory.valueOf(
+                                    stringPropertieType
+                            );
+
                             break;
+
                         case "Area information":
-                            System.out.println("Enter the propertie area");
+
+                            System.out.println("Enter the property area");
+
                             String stringArea = scn.nextLine();
+
                             if (stringArea.isBlank()) {
-                                System.out.println("Enter a area");
+                                System.out.println("Enter an area");
                                 continue;
                             }
+
                             evaluateData(stringArea);
-                            if (Integer.parseInt(stringArea) <= 0) {
+
+                            area = Double.parseDouble(stringArea);
+
+                            if (area <= 0) {
                                 System.out.println("Invalid area");
                                 continue;
                             }
-                            area = Double.parseDouble(stringArea);
+
                             break;
-                        case "Status Information":
-                            System.out.println("Enter the propertie status");
+
+                        case "Status information":
+
+                            System.out.println("Enter the property status");
                             System.out.println("The condition can be:");
-                            Stream.of(PropertyCondition.values()).forEach(System.out::println);
-                            String stringStatus = scn.nextLine().toUpperCase();
+
+                            Stream.of(PropertyCondition.values())
+                                    .forEach(System.out::println);
+
+                            String stringStatus = scn.nextLine()
+                                    .trim()
+                                    .toUpperCase();
+
                             if (stringStatus.isBlank()) {
                                 System.out.println("Enter a status");
                                 continue;
                             }
+
                             evaluateData(stringStatus);
-                            propertyCondition = PropertyCondition.valueOf(stringStatus);
+
+                            propertyCondition = PropertyCondition.valueOf(
+                                    stringStatus
+                            );
+
                             break;
-                        case "New Price Information":
-                            System.out.println("Enter the new propertie price");
+
+                        case "New price information":
+
+                            System.out.println(
+                                    "Enter the new property price"
+                            );
+
                             String newPrice = scn.nextLine();
+
                             if (newPrice.isBlank()) {
                                 System.out.println("Enter a price");
                                 continue;
                             }
+
                             evaluateData(newPrice);
+
                             askingPrice = new BigDecimal(newPrice);
-                            break;
-                        case "Custodian information":
-                            System.out.println("Enter the user email");
-                            String userEmail = scn.nextLine();
-                            if (userEmail.isBlank()) {
-                                System.out.println("Enter a email");
+
+                            if (askingPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                                System.out.println("Invalid price");
                                 continue;
                             }
+
+                            break;
+
+                        case "Custodian information":
+
+                            System.out.println("Enter the user email");
+
+                            String userEmail = scn.nextLine()
+                                    .trim();
+
+                            if (userEmail.isBlank()) {
+                                System.out.println("Enter an email");
+                                continue;
+                            }
+
+                            // Allows "cancel" to propagate to the caller.
                             evaluateData(userEmail);
-                            if (!userEmail.substring(userEmail.length() - 10).equals("@email.com")) {
+
+                            if (!userEmail.endsWith("@email.com")) {
                                 System.out.println("Invalid email");
                                 continue;
                             }
+
                             custodian = userDao.findByEmail(userEmail)
-                                    .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(
+                                            () -> new InvalidDataRequest(
+                                                    "User not found"
+                                            )
+                                    );
+
                             break;
+
                         default:
-                            throw new ServiceException("Something went wrong to buy");
+
+                            throw new ServiceException(
+                                    "Something went wrong while buying"
+                            );
                     }
+
                     break;
+
                 } catch (NumberFormatException e) {
+
                     System.err.println("Failed to read the value");
-                } catch (TransactionException e) {
-                    System.err.println("Failed to request data: " + e.getMessage());
-                } catch (StringIndexOutOfBoundsException e) {
-                    System.err.println("Invalid request data: " + e.getMessage());
+
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid request data: " + e.getMessage());
-                } 
+
+                    System.err.println(
+                            "Invalid request data: " + e.getMessage()
+                    );
+                }
             }
         }
+
         Propertie propertie = new Propertie(
                 newManager,
                 transactionAmount,
@@ -174,124 +289,217 @@ public interface SellOperation extends Evaluate {
                 ListingStatus.AVAILABLE,
                 propertyCondition
         );
+
         propertieDao.savePropertie(propertie);
+
         Transaction transaction = new Transaction(
                 propertie,
                 custodian,
                 transactionAmount,
                 MarketTransaction.SALE
         );
+
         transactionDao.saveTransaction(transaction);
+
         System.out.println("Propertie bought");
     }
 
     default void sell(Scanner scn) {
+
         UserDao userDao = new UserDao();
         PropertieDao propertieDao = new PropertieDao();
         TransactionDao transactionDao = new TransactionDao();
+
         Propertie property = null;
         User user = null;
-        String[] process = {"Propertie Information", "Buyer's Information", "Transaction amount"};
+
+        String[] process = {
+            "Propertie Information",
+            "Buyer's Information",
+            "Transaction amount"
+        };
+
         for (String step : process) {
+
             System.out.println(step);
+
             while (true) {
+
                 try {
+
                     switch (step) {
+
                         case "Propertie Information":
+
                             System.out.println("Enter the property id");
+
                             String dataId = scn.nextLine();
+
                             if (dataId.isBlank()) {
-                                System.out.println("Enter a property d");
+                                System.out.println(
+                                        "Enter a property id"
+                                );
                                 continue;
                             }
+
                             evaluateData(dataId);
-                            property = propertieDao.findById(Long.valueOf(dataId))
-                                .orElseThrow(() -> new InvalidDataRequest("Property not found"));
+
+                            property = propertieDao.findById(
+                                    Long.valueOf(dataId)
+                            ).orElseThrow(
+                                    () -> new InvalidDataRequest(
+                                            "Property not found"
+                                    )
+                            );
+
                             break;
+
                         case "Buyer's Information":
+
                             System.out.println("Enter the buyer email");
-                            String buyer = scn.nextLine();
+
+                            String buyer = scn.nextLine()
+                                    .trim();
+
                             if (buyer.isBlank()) {
-                                System.out.println("Invalid user email");
+                                System.out.println(
+                                        "Invalid user email"
+                                );
                                 continue;
                             }
+
                             evaluateData(buyer);
-                            if (!buyer.substring(buyer.length() - 10).equals("@email.com")) {
+
+                            if (!buyer.endsWith("@email.com")) {
                                 System.out.println("Invalid email");
                                 continue;
                             }
+
                             user = userDao.findByEmail(buyer)
-                                .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                                    .orElseThrow(
+                                            () -> new InvalidDataRequest(
+                                                    "User not found"
+                                            )
+                                    );
+
                             break;
+
                         case "Transaction amount":
-                            System.out.println("You want to change the asking price? yes?");
-                            String res = scn.nextLine();
+
+                            System.out.println(
+                                    "Do you want to change the asking price? yes/no"
+                            );
+
+                            String res = scn.nextLine()
+                                    .trim()
+                                    .toLowerCase();
+
                             if (res.isBlank()) {
-                            System.out.println("Enter a answer");
+                                System.out.println("Enter an answer");
                                 continue;
                             }
+
                             evaluateData(res);
+
                             if (res.equals("yes")) {
+
                                 System.out.println("Enter the new price");
+
                                 String stringPrice = scn.nextLine();
+
                                 if (stringPrice.isBlank()) {
-                                    System.out.println("Failed to change the price");
+                                    System.out.println(
+                                            "Failed to change the price"
+                                    );
                                     continue;
                                 }
+
                                 evaluateData(stringPrice);
-                                if (Integer.parseInt(stringPrice) <= 0) {
+
+                                BigDecimal newPrice = new BigDecimal(
+                                        stringPrice
+                                );
+
+                                if (newPrice.compareTo(BigDecimal.ZERO) <= 0) {
                                     System.out.println("Invalid price");
                                     continue;
                                 }
-                                property.setAskingPrice(new BigDecimal(stringPrice));
+
+                                property.setAskingPrice(newPrice);
                             }
+
                             break;
+
                         default:
-                            throw new TransactionException("Something went wrong");
+
+                            throw new TransactionException(
+                                    "Something went wrong"
+                            );
                     }
+
                     break;
+
                 } catch (NumberFormatException e) {
+
                     System.err.println("Failed to read the value");
-                } catch (TransactionException e) {
-                    System.err.println("Failed to request data: " + e.getMessage());
-                } catch (StringIndexOutOfBoundsException e) {
-                    System.err.println("Invalid to request data: " + e.getMessage());
+
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid request data: " + e.getMessage());
-                } 
+
+                    System.err.println(
+                            "Invalid request data: " + e.getMessage()
+                    );
+                }
             }
         }
+
         property.setListingStatus(ListingStatus.SOLD);
+
         propertieDao.savePropertie(property);
+
         Transaction transaction = new Transaction(
-            property,
-            user,
-            property.getAskingPrice(),
-            MarketTransaction.SALE
+                property,
+                user,
+                property.getAskingPrice(),
+                MarketTransaction.SALE
         );
+
         transactionDao.saveTransaction(transaction);
     }
 
     @Transactional
     default void sale() {
+
         Scanner scn = new Scanner(System.in);
-        System.out.println("Sale process..,");
-        System.out.println("if want to cancel write cancel");
+
+        System.out.println("Sale process...");
+        System.out.println("If you want to cancel, write cancel");
+
         while (true) {
-            System.out.println("Is buy or sell?");
-            String option = scn.nextLine().toLowerCase();
+
+            System.out.println("Is it buy or sell?");
+
+            String option = scn.nextLine()
+                    .trim()
+                    .toLowerCase();
+
             if (option.isBlank()) {
-                System.out.println("Enter a option");
+                System.out.println("Enter an option");
                 continue;
             }
+
             evaluateData(option);
+
             if (option.equals("buy")) {
                 buy(scn);
                 return;
-            } else if (option.equals("sell")) {
+            }
+
+            if (option.equals("sell")) {
                 sell(scn);
                 return;
             }
+
+            System.out.println("Invalid option");
         }
     }
 }

@@ -5,6 +5,7 @@ import com.grupo6.realestate.dao.UserDao;
 import com.grupo6.realestate.questionaries.AdminFunctions;
 import com.grupo6.realestate.questionaries.TransactionFuncions;
 import com.grupo6.realestate.service.AdminService;
+import com.grupo6.realestate.service.PropertieService;
 import com.grupo6.realestate.service.UserService;
 import java.util.Scanner;
 
@@ -13,17 +14,23 @@ public class Main {
         System.out.println("Programn is running");
         AdminDao adminDao = new AdminDao();
         UserDao userDao = new UserDao();
+        PropertieService propertieService = new PropertieService();
         adminDao.ping();
         System.out.println("Connected to the database");
         AdminFunctions adminFunctions = new AdminFunctions(
             new AdminService(adminDao),
             new UserService(userDao),
-            new TransactionFuncions()
+            new TransactionFuncions(),
+            propertieService
         );
         Scanner scn = new Scanner(System.in);
         while (true) {
             System.out.println("Choose a option");
-            System.out.println("1. Admin functions\n2. Search properties\n3. Shut down programn\n");
+            System.out.println("""
+                1. Admin functions
+                2. Search properties
+                4. Shut down programn\n
+            """);
             try {
                 int option = Integer.parseInt(scn.nextLine());
                 switch (option) {
@@ -31,6 +38,7 @@ public class Main {
                         adminFunctions.adminQuestionary();
                         break;
                     case 2:
+                        propertieService.searchPropertie();
                         break;
                     case 3:
                         System.out.println("Closing programn");

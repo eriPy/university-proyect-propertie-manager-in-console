@@ -127,4 +127,17 @@ public class Propertie {
         if (listingStatus == null) throw new InvalidDataRequest("The listing status is invalid");
         this.listingStatus = listingStatus;
     }
+    
+    public void setPropertyCondition(PropertyCondition propertyCondition) {
+        if (propertyCondition == null) throw new InvalidDataRequest("The listing status is invalid");
+        this.propertyCondition = propertyCondition;
+    }
+    
+    @Override
+    public String toString() {
+        return "\nProperty id: " + id +
+            "\nProperty manager: " + admin.getAdminName() +
+            "\nProperty type: " + category +
+            "\nProperty location: " + department;
+    }
 }

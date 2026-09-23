@@ -126,4 +126,14 @@ public class Transaction {
         if (transactionEndDate == null) throw new InvalidDataRequest("The transaction end date is invalid");
         this.transactionEndDate = transactionEndDate;
     }
+    
+    @Override
+    public String toString() {
+        return "Transaction:\n" +
+            "Transaction id: " + id +
+            propertie.toString() +
+            "\nCustodian: " + propertieCustodian.getEmail() +
+            "\nAmount: " + transactionAmount + 
+            "\nTransaction date: " + transactionDate.toString();
+    }
 }

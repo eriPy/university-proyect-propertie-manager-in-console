@@ -275,6 +275,7 @@ public interface SellOperation extends Evaluate {
             MarketTransaction.SALE
         );
         transactionDao.saveTransaction(transaction);
+        System.out.println("Sell succesfuly");
     }
     
     @Transactional

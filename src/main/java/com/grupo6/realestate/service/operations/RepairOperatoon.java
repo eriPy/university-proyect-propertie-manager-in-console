@@ -114,5 +114,6 @@ public interface RepairOperatoon extends Evaluate {
             endDate
         );
         transactionDao.saveTransaction(transaction);
+        System.out.println("The transaction was made");
     }
 }

@@ -2,6 +2,7 @@ package com.grupo6.realestate.questionaries;
 import com.grupo6.realestate.dao.UserDao;
 import com.grupo6.realestate.service.AdminService;
 import com.grupo6.realestate.entity.Admin;
+import com.grupo6.realestate.service.PropertieService;
 import com.grupo6.realestate.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,8 @@ public class AdminFunctions {
     public AdminFunctions(
         AdminService adminService,
         UserService userService,
-        TransactionFuncions transactionFuncions
+        TransactionFuncions transactionFuncions,
+        PropertieService propertieService
     ) {
         this.adminService = adminService;
         adminActions.put(1, () -> {
@@ -46,6 +48,10 @@ public class AdminFunctions {
             System.out.println("Processing a transaction...");
             transactionFuncions.questionary();
         });
+        adminActions.put(8, () -> {
+            System.out.println("Reporting a property");
+            propertieService.report();
+        });
     }
     
     public void adminQuestionary() {
@@ -71,14 +77,15 @@ public class AdminFunctions {
                     5. View a user
                     6. View all users
                     7. Process a transaction
-                    8. Shut down admin questionnaire
+                    8. Report property status
+                    9. Shut down admin questionnaire
                 """);
                 int option = Integer.parseInt(scn.nextLine());
-                if (option < 8 && option > 0) {
+                if (option < 9 && option > 0) {
                     Runnable action = adminActions.get(option);
                     action.run();
                 } else {
-                    if (option == 8) {
+                    if (option == 9) {
                         System.out.println("Closing questionnaire");
                         return;
                     } else {

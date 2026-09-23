@@ -50,7 +50,9 @@ public class AdminService {
     public void viewAllAdmins() {
         System.out.println("Admin List");
         List<Admin> adminsList = adminDao.findAll();
-        for (int i = 0; i < adminsList.size(); i++) System.out.println(adminsList.get(i).toString());
+        for (int i = 0; i < adminsList.size(); i++) {
+            System.out.println("\n" + adminsList.get(i).toString() + "\n");
+        }
     }
     
     

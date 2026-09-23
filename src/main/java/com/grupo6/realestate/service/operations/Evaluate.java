@@ -5,7 +5,7 @@ import com.grupo6.realestate.exceptions.TransactionException;
 public interface Evaluate {
 
     default void evaluateData(String data) {
-        if (data.equalsIgnoreCase("cancel")) {
+        if (data.equalsIgnoreCase("cancel") || data.equalsIgnoreCase("exit")) {
             System.out.println("Leave the trasaction process");
             throw new TransactionException("The transaction was cancel");
         }

@@ -17,13 +17,13 @@ public interface TransferOperation extends Evaluate {
         UserDao userDao = new UserDao();
         PropertieDao propertieDao = new PropertieDao();
         TransactionDao transactionDao = new TransactionDao();
-
         Propertie property = null;
         User user = null;
-
+        User newUser = null;
         String[] process = {
             "Propertie Information",
-            "Buyer's Information"
+            "Buyer's Information",
+            "New Custodian"
         };
         for (String step : process) {
             System.out.println(step);
@@ -56,6 +56,21 @@ public interface TransferOperation extends Evaluate {
                             user = userDao.findByEmail(buyer)
                                 .orElseThrow(() -> new InvalidDataRequest("User not found"));
                             break;
+                        case "New Custodian":
+                            System.out.println("Enter the new custodian email");
+                            String newCustodian = scn.nextLine();
+                            if (newCustodian.isBlank()) {
+                                System.out.println("Invalid user email");
+                                continue;
+                            }
+                            evaluateData(newCustodian);
+                            if (!newCustodian.endsWith("@email.com")) {
+                                System.out.println("Invalid email");
+                                continue;
+                            }
+                            user = userDao.findByEmail(newCustodian)
+                                .orElseThrow(() -> new InvalidDataRequest("User not found"));
+                            break;
                         default:
                             throw new TransactionException("Something went wrong");
                     }
@@ -69,9 +84,11 @@ public interface TransferOperation extends Evaluate {
         }
         Transaction transaction = new Transaction(
             property,
-            user,
+            newUser,
             MarketTransaction.TRANSFER
         );
         transactionDao.saveTransaction(transaction);
+        System.out.println("Transfer succesfuly");
+        System.out.println(user.getEmail() + " has transferred their property to " + newUser.getEmail());
     }
 }

@@ -90,7 +90,7 @@ public class UserService {
     public void viewAllUser() {
         System.out.println("Users list");
         List<User> usersList = userDao.findAll();
-        for (int i = 0; i < usersList.size(); i++) System.out.println(usersList.get(i).toString());
+        for (int i = 0; i < usersList.size(); i++) System.out.println("\n" + usersList.get(i).toString() + "\n");
     }
     
     public void viewUser() {
